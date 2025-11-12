@@ -36,6 +36,7 @@ public final class DRChat extends JavaPlugin implements Listener {
     private final HashMap<Player, ChatTypePair> playerChat = new HashMap<>();
     private final Set<Player> suppress = new HashSet<>();
     private final Random random = new Random();
+    private final IntFunction<Component[]> factory = Component[]::new;
 
     @Override
     public void onEnable() {
@@ -98,8 +99,8 @@ public final class DRChat extends JavaPlugin implements Listener {
             pair.regular().add(msg);
         }
 
-        Component[] regular = pair.regular().toArray();
-        Component[] damage  = pair.damage().toArray();
+        Component[] regular = pair.regular().toArray(factory);
+        Component[] damage  = pair.damage().toArray(factory);
 
         int pad = 20 - (regular.length + damage.length);
         if (pad < 0) pad = 0;
@@ -175,10 +176,9 @@ public final class DRChat extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        IntFunction<Component[]> factory = Component[]::new;
         playerChat.put(player, new ChatTypePair(
-                new BoundedQueue<>(3, factory),
-                new BoundedQueue<>(17, factory)));
+                new CircularBuffer<>(3),
+                new CircularBuffer<>(17)));
 
         processChat(player, Component.text(
                 "Welcome to DRChat Example\n" +
