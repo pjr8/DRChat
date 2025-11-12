@@ -1,0 +1,5 @@
+name: DRChat
+version: '1.0-SNAPSHOT'
+main: me.paulrobinson.DRChat
+api-version: '1.21'
+depend: [ProtocolLib]
